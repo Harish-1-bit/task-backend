@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, Boolean
 from src.utils.db import base
 
 class UserModel(base):
-    __tablename__ = 'user'
-
+    __tablename__ = 'users'
+    
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     userName = Column(String, nullable=False)
