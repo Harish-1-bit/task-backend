@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends, status
 from src.Task import controller
 from src.Task.dtos import TaskSchema
 from src.utils.db import get_db
+from src.utils.authenticateUser import get_current_user
 
-task_route = APIRouter(prefix='/task')
+task_route = APIRouter(prefix='/task',
+                       dependencies=[Depends(get_current_user)]
+                       )
 
 @task_route.post('/', status_code=status.HTTP_201_CREATED)
 def create_task(body:TaskSchema, db = Depends(get_db)):

@@ -4,6 +4,7 @@ from sqlalchemy import or_
 from src.Users.models import UserModel
 from fastapi import HTTPException, status
 from src.utils.hash import hash_password, verify_password
+from src.utils.auth import create_access_token
 
 def register(body : UserSchema, db : Session ):
     data=body.model_dump()
@@ -24,11 +25,12 @@ def login_user(body: loginScheme, db:Session):
     data = body.model_dump()
     user = db.query(UserModel).filter(
         or_(
-        userName = data['userName'],
-        email = data['email']
+        UserModel.userName == data['identifier'],
+        UserModel.email == data['identifier']
     )).first()
+    token = create_access_token(user.id)
     check_password = verify_password(data['password'],user.password)
     if(check_password):
-        return {'status':status.HTTP_200_OK,'data':user}
+        return {'status':status.HTTP_200_OK,'data':user, 'token':token}
     else:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED,detail='User password or username not correct')

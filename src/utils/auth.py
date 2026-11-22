@@ -1,4 +1,5 @@
 import jwt
+from fastapi import HTTPException
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 import os
@@ -16,6 +17,30 @@ def create_access_token(user_id:int):
         'sub':str(user_id),
         'exp':expire
     }
-    token = jwt.decode(payload,secret_key,algorithm=algorithm)
+    token = jwt.encode(payload,secret_key,algorithm=algorithm)
 
     return token
+
+
+def verify_access_token(token: str):
+
+    try:
+        payload = jwt.decode(
+            token,
+            secret_key,
+            algorithms=[algorithm]
+        )
+
+        return payload.get("sub")
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Token expired"
+        )
+
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
