@@ -5,3 +5,7 @@ class UserSchema(BaseModel):
     userName:str
     password :str
     email:str
+
+class loginScheme(BaseModel):
+    identifier:str
+    password:str
